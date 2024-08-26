@@ -8,17 +8,28 @@ nSProws= 2;
 nSPcols= 3;
 sp_ax= get_axes(5, nSProws, nSPcols);
 
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\ARO2023_files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\0ms_12Hz\';
+Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\5ms_12Hz\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\10ms_12Hz\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\40ms_12Hz\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\40ms_20Hz\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\25ms_20Hz\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\25ms_8Hz\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\25ms_5Hz\';
+
+
 %% 
 
-[human_dAM_data, human_SAM_data] = plot_human_sAM_dAM_data(sp_ax([1, 6]));
+[human_dAM_data, human_SAM_data, lin_mdl_human] = plot_human_sAM_dAM_data(sp_ax([1, 6]), Root_dAM_power_dir);
 
-[gerbil_dAM_data, gerbil_SAM_data] = plot_gerbil_sAM_dAM_data(sp_ax([2, 6]));
+[gerbil_dAM_data, gerbil_SAM_data, lin_mdl_gerbil] = plot_gerbil_sAM_dAM_data(sp_ax([2, 6]), Root_dAM_power_dir);
 
-[mice_dAM_data, mice_SAM_data] = plot_mice_sAM_dAM_data(sp_ax([3, 6]));
+[mice_dAM_data, mice_SAM_data, lin_mdl_mice] = plot_mice_sAM_dAM_data(sp_ax([3, 6]), Root_dAM_power_dir);
 
-[rat_vert_dAM_data, rat_vert_SAM_data] = plot_rat_sAM_dAM_data(sp_ax([4, 6]), 'vertical');
+[rat_vert_dAM_data, rat_vert_SAM_data, lin_mdl_rat_vert] = plot_rat_sAM_dAM_data(sp_ax([4, 6]), 'vertical', Root_dAM_power_dir);
 
-[rat_horz_dAM_data, rat_horz_SAM_data] = plot_rat_sAM_dAM_data(sp_ax([5, 6]), 'horizontal');
+[rat_horz_dAM_data, rat_horz_SAM_data, lin_mdl_rat_horz] = plot_rat_sAM_dAM_data(sp_ax([5, 6]), 'horizontal', Root_dAM_power_dir);
 
 set(findall(gcf,'-property','FontSize'),'FontSize', 8);
 set(findall(gcf,'-property','TickDir'),'TickDir', 'both');
@@ -34,6 +45,10 @@ end
 
 %% 
 % overall Rsq 
+% all_dam_data= [normalize(human_dAM_data.mu_young), normalize(gerbil_dAM_data.mu_19wk), normalize(rat_vert_dAM_data.mu_control), ...
+%     normalize(rat_horz_dAM_data.mu_control), normalize(mice_dAM_data.mu_control)];
+% all_SAM_data= [normalize(human_SAM_data.mu_young), normalize(gerbil_SAM_data.mu_19wk), normalize(rat_vert_SAM_data.mu_control), ...
+%     normalize(rat_horz_SAM_data.mu_control), normalize(mice_SAM_data.mu_control)];
 all_dam_data= [normalize(human_dAM_data.mu_young), normalize(gerbil_dAM_data.mu_19wk), normalize(rat_vert_dAM_data.mu_control), ...
     normalize(rat_horz_dAM_data.mu_control), normalize(mice_dAM_data.mu_control)];
 all_SAM_data= [normalize(human_SAM_data.mu_young), normalize(gerbil_SAM_data.mu_19wk), normalize(rat_vert_SAM_data.mu_control), ...
@@ -100,14 +115,21 @@ if do_save_fig
     print(fig_name, '-dpng', '-r600')
 end
 
+
+%% print all Rsq 
+figure(98)
+plot([lin_mdl_human.Rsquared.Adjusted, lin_mdl_gerbil.Rsquared.Adjusted, lin_mdl_mice.Rsquared.Adjusted, lin_mdl_rat_vert.Rsquared.Adjusted, lin_mdl_rat_horz.Rsquared.Adjusted, lin_mdl_all.Rsquared.Adjusted,], 'd-');
+ylim([0, 1]);
+set(gca, 'XTick', 1:6, 'XTickLabel', {'human', 'gerbil', 'mice', 'rat-V', 'rat-H', 'all'})
 %% 
-function [gerbil_dAM_data, gerbil_SAM_data] = plot_gerbil_sAM_dAM_data(sp_ax)
+function [gerbil_dAM_data, gerbil_SAM_data, lin_mdl] = plot_gerbil_sAM_dAM_data(sp_ax, Root_dAM_power_dir)
 freq_tick= [16 50 200 800];
 lw1= 1;
 lw2= 1.25;
 
 % dAM data 
-Root_dAM_power_dir= '.\files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\ARO2023_files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\';
 gerbil_fName= [Root_dAM_power_dir 'gerbil_three_group_power.mat'];
 gerbil_dAM_data= load(gerbil_fName);
 AMfreqs_Hz= gerbil_dAM_data.AM_Hz_2use;
@@ -122,7 +144,7 @@ gerbil_dAM_data.mu_75wk= nanmean(gerbil_dAM_data.pow_val_old_frac);
 gerbil_dAM_data.sem_75wk= nanstd(gerbil_dAM_data.pow_val_old_frac)/sqrt(size(gerbil_dAM_data.pow_val_old_frac,2));
 
 % Discrete data 
-Discrete_FFT_Dir= '.\files\Discrete_FFTdata\';
+Discrete_FFT_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\ARO2023_files\Discrete_FFTdata\';
 
 discrete_freq_data_19wk= readtable([Discrete_FFT_Dir 'Gerbilefr3k_19wk.xlsx']);
 discrete_freqs_19wk= discrete_freq_data_19wk.Level;
@@ -194,13 +216,14 @@ lin_mdl= fitlm(gerbil_SAM_data.mu_19wk(:), gerbil_dAM_data.mu_19wk(:))
 
 end
 
-function [mice_dAM_data, mice_SAM_data] = plot_mice_sAM_dAM_data(sp_ax)
+function [mice_dAM_data, mice_SAM_data, lin_mdl] = plot_mice_sAM_dAM_data(sp_ax, Root_dAM_power_dir)
 freq_tick= [16 50 200 800];
 lw1= 1;
 lw2= 1.25;
 
 % dAM data 
-Root_dAM_power_dir= '.\files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\ARO2023_files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\';
 gerbil_fName= [Root_dAM_power_dir 'mice_two_group_power.mat'];
 mice_dAM_data= load(gerbil_fName);
 AMfreqs_Hz= mice_dAM_data.AM_Hz_2use;
@@ -213,7 +236,7 @@ mice_dAM_data.mu_exposed= nanmean(mice_dAM_data.pow_val_exposed_frac);
 mice_dAM_data.sem_exposed= nanstd(mice_dAM_data.pow_val_exposed_frac)/sqrt(size(mice_dAM_data.pow_val_exposed_frac,2));
 
 % Discrete data 
-Discrete_FFT_Dir= '.\files\Exports_Mice\';
+Discrete_FFT_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\Exports_Mice\';
 
 discrete_freq_data_sem_control= readtable([Discrete_FFT_Dir 'MousediscreteEFRs_Control.xlsx']);
 discrete_freqs_control= discrete_freq_data_sem_control.Rate;
@@ -275,13 +298,14 @@ lin_mdl= fitlm(mice_SAM_data.mu_control(:), mice_dAM_data.mu_control(:))
 
 end
 
-function [rat_dAM_data, rat_SAM_data] = plot_rat_sAM_dAM_data(sp_ax, configuration)
+function [rat_dAM_data, rat_SAM_data, lin_mdl] = plot_rat_sAM_dAM_data(sp_ax, configuration, Root_dAM_power_dir)
 freq_tick= [16 50 200 800];
 lw1= 1;
 lw2= 1.25;
 
 % dAM data 
-Root_dAM_power_dir= '.\files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\ARO2023_files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\';
 rat_fName= [Root_dAM_power_dir 'rat_three_group_power_noise_' configuration '.mat'];
 rat_dAM_data= load(rat_fName);
 AMfreqs_Hz= rat_dAM_data.AM_Hz_2use;
@@ -292,7 +316,7 @@ rat_dAM_data.mu_control= nanmean(rat_dAM_data.pow_val_ctrl_frac);
 rat_dAM_data.sem_control= nanstd(rat_dAM_data.pow_val_ctrl_frac)/sqrt(size(rat_dAM_data.pow_val_ctrl_frac,2));
 
 % Discrete data 
-Discrete_FFT_Dir= '.\files\Rat_galactose\';
+Discrete_FFT_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\Rat_galactose\';
 
 if strcmp(configuration, 'vertical')
     discrete_freq_data_sem_control= readtable([Discrete_FFT_Dir 'NAMfmod_historical_ctrl_ch1_vert.xlsx']);
@@ -350,13 +374,15 @@ lin_mdl= fitlm(rat_SAM_data.mu_control(:), rat_dAM_data.mu_control(:))
 
 end
 
-function [human_dAM_data, human_SAM_data] = plot_human_sAM_dAM_data(sp_ax)
+%%
+function [human_dAM_data, human_SAM_data, lin_mdl] = plot_human_sAM_dAM_data(sp_ax, Root_dAM_power_dir)
 freq_tick= [16 50 200 800];
 lw1= 1;
 lw2= 1.25;
 
 % dAM data 
-Root_dAM_power_dir= '.\files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\ARO2023_files\dAM_power_data\';
+% Root_dAM_power_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\dAM_power_data\';
 human_fName= [Root_dAM_power_dir 'human_two_group_power.mat'];
 human_dAM_data= load(human_fName);
 AMfreqs_Hz= human_dAM_data.AM_Hz_2use;
@@ -369,7 +395,7 @@ human_dAM_data.mu_ma= nanmean(human_dAM_data.pow_val_midaged_frac);
 human_dAM_data.sem_ma= nanstd(human_dAM_data.pow_val_midaged_frac)/sqrt(size(human_dAM_data.pow_val_midaged_frac,2));
 
 % Discrete data 
-Discrete_FFT_Dir= '.\files\Exports_Humans\EFR_Discrete\';
+Discrete_FFT_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\Exports_Humans\EFR_Discrete\';
 
 discrete_freq_data_sem_young= readtable([Discrete_FFT_Dir 'EFR_Human_Young.xlsx']);
 discrete_freqs_young= discrete_freq_data_sem_young.Level;
@@ -470,6 +496,7 @@ for spNum=1:(nSProws*nSPcols)
     set(gca, 'Units', 'normalized', 'Position', [xc_current, yc_current, xw, yw])
 
 end
+
 pos_sp_ax_end= get(sp_ax(end), 'Position');
 pos_sp_ax_end(1)= pos_sp_ax_end(1)+.03;
 pos_sp_ax_end(3)= pos_sp_ax_end(3)+.02;

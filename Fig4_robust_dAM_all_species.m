@@ -16,8 +16,9 @@ if ~isfolder(fig_dir)
     end
 end
 
-matlab_path = '.\SP_path_code\';
-addpath(matlab_path);
+% CodeDir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\';
+CodeDir= '..\';
+addpath(CodeDir);
 
 
 %% load estimate AM trajectory
@@ -45,8 +46,8 @@ verboseAxis= 0;
 [dam_traj_Hz_mice_NFvalid, all_pow_am_mice, all_pow_am_mice_NF, mu_pow_am_mice, mu_pow_am_mice_NF]= load_species_data('mice', sp_ax_TF( 5 + (0:(nSProws-1))*nSPcols), verboseAxis, doSaveGrandAvg);
 
 axes(sp_ax_TF(nSPcols*(nSProws-1)))
-text(.02, .3, 'dAM', 'Color', get_color('dg'), 'Units', 'normalized')
-text(.02, .13, 'noise floor', 'Color', get_color('k'), 'Units', 'normalized')
+text(.02, .3, 'dAM', 'Color', helper.get_color('dg'), 'Units', 'normalized')
+text(.02, .13, 'noise floor', 'Color', helper.get_color('k'), 'Units', 'normalized')
 
 %% panel letters 
 % delete(panel_han);
@@ -78,11 +79,12 @@ if do_save_fig
     print(fig_name, '-dsvg')
 end
 %%
+rmpath(CodeDir);
 
 %% all functions
 function [dam_traj_Hz_NFvalid, all_pow_am, all_pow_am_NF, mu_pow_am, mu_pow_am_NF, lHan]= load_species_data(Species, sp_ax, verboseAxis, doSaveGrandAvg)
 
-fs_env= 2e3;
+fs_env= 5e3;
 bp_window_Hz= [14, 1.5e3];
 Filter_HalfWindow_Hz= 12;
 
@@ -97,10 +99,12 @@ switch lower(Species)
 
         % load sitmuli
         fs_sig= 10e3;
-        [stim_wav, fs_stim_org]= audioread('.\files\wavfiles\DoDAMPatternsNEW_3k_gerbils_ER3c2cc.wav');
-        stim_wav= gen_resample(stim_wav, fs_stim_org, fs_sig);
+%         [stim_wav, fs_stim_org]= audioread('D:\Dropbox\Pitts_files\Aravind_ExpAM\wavfiles\DoDAMPatternsNEW_3k_gerbils_ER3c2cc.wav');
+        [stim_wav, fs_stim_org]= audioread('D:\Dropbox\Pitts_files\Aravind_ExpAM\wavfiles\DoDAMPatternsNEW_3k_gerbils_ER3c2cc.wav');
+        stim_wav= helper.gen_resample(stim_wav, fs_stim_org, fs_sig);
 
-        Species_Dir= '.\files\Exports_Humans\DoDAM3k_Human\YA\';
+%         Species_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\Exports_Humans\DoDAM3k_Human\YA\';
+        Species_Dir= '..\Exports_Humans\DoDAM3k_Human\YA\';
         all_files= dir([Species_Dir '*Fz-Rtip']);
         fs_ffr= 1/(61.035156e-6);
         FFR_gain= 0.1;
@@ -110,8 +114,8 @@ switch lower(Species)
         tMin_s= 0;
         tMax_s= 1;
 
-        col_deep= get_color('m');
-        col_light= get_color('lavender');
+        col_deep= helper.get_color('m');
+        col_light= helper.get_color('lavender');
 
     case 'gerbil'
         % load dAM trajectory
@@ -121,11 +125,12 @@ switch lower(Species)
 
         % load sitmuli
         fs_sig= 10e3;
+%         [stim_wav, fs_stim_org]= audioread('D:\Dropbox\Pitts_files\Aravind_ExpAM\wavfiles\DoDAMPatternsNEW_3k_gerbils_ER3c2cc.wav');
+        [stim_wav, fs_stim_org]= audioread('..\wavfiles\DoDAMPatternsNEW_3k_gerbils_ER3c2cc.wav');
+        stim_wav= helper.gen_resample(stim_wav, fs_stim_org, fs_sig);
 
-        [stim_wav, fs_stim_org]= audioread('.\files\wavfiles\DoDAMPatternsNEW_3k_gerbils_ER3c2cc.wav');
-        stim_wav= gen_resample(stim_wav, fs_stim_org, fs_sig);
-
-        Species_Dir= '.\files\Exports_Gerbils\DoDAM3k\19wk\';
+%         Species_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\Exports_Gerbils\DoDAM3k\19wk\';
+        Species_Dir= '..\Exports_Gerbils\DoDAM3k\19wk\';
         all_files= dir([Species_Dir 'GER*']);
         fs_ffr= 1/(40.96e-6);
         FFR_gain= 1;
@@ -135,31 +140,33 @@ switch lower(Species)
         tMin_s= 0;
         tMax_s= 1;
 
-        col_deep= get_color('b');
-        col_light= get_color('lb');
+        col_deep= helper.get_color('b');
+        col_light= helper.get_color('lb');
 
     case {'rat', 'rat_vert', 'rat_horz'}
         
         %         tone_or_noise= 'tone';
         tone_or_noise= 'noise';
         % load dAM trajectory
-
-        dam_traj_Hz_struct= load('.\files\dAM_files_for_Satya_and_Aravind\Code\approx_am_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
+%         dam_traj_Hz_struct= load('D:\Dropbox\Pitts_files\Aravind_ExpAM\dAM_files_for_Satya_and_Aravind\Code\approx_am_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
+        dam_traj_Hz_struct= load('..\dAM_files_for_Satya_and_Aravind\Code\approx_am_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
         Xorg= (1:length(dam_traj_Hz_struct.AMfreqvec_est))'/dam_traj_Hz_struct.fs;
         Yorg= dam_traj_Hz_struct.AMfreqvec_est(:);
 
         % load sitmuli
         fs_sig= 24e3;
-        temp_stim_data= load('DOD_sweeps_Nov2021.mat');
+%         temp_stim_data= load('D:\Dropbox\Pitts_files\Aravind_ExpAM\dAM_files_for_Satya_and_Aravind\Code\DOD_sweeps_Nov2021.mat');
+        temp_stim_data= load('..\dAM_files_for_Satya_and_Aravind\Code\DOD_sweeps_Nov2021.mat');
         if strcmp(tone_or_noise, 'tone')
             stim_wav= temp_stim_data.AMFMtoneup_piece(:);
         elseif strcmp(tone_or_noise, 'noise')
             stim_wav= temp_stim_data.AMFMnoiseup_piece(:);
         end
         fs_stim_org= temp_stim_data.amfmtonesweep.SampleRate;
-        stim_wav= gen_resample(stim_wav, fs_stim_org, fs_sig);
+        stim_wav= helper.gen_resample(stim_wav, fs_stim_org, fs_sig);
 
-        Species_Dir= '.\files\dAM_files_for_Satya_and_Aravind\inData\';
+%         Species_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\dAM_files_for_Satya_and_Aravind\inData\';
+        Species_Dir= '..\dAM_files_for_Satya_and_Aravind\inData\';
         if strcmp(tone_or_noise, 'tone')
             all_files= dir([Species_Dir '*tone*.mat']);
             freq_lim_kHz= [6, 10];
@@ -177,11 +184,11 @@ switch lower(Species)
         tMax_s= 1;
 
         if strcmp(Species, 'rat_vert')
-            col_deep= get_color('r');
-            col_light= get_color('lr');
+            col_deep= helper.get_color('r');
+            col_light= helper.get_color('lr');
         elseif strcmp(Species, 'rat_horz')
-            col_deep= get_color('prp');
-            col_light= get_color('pink');
+            col_deep= helper.get_color('prp');
+            col_light= helper.get_color('pink');
         end
 
     case 'mice'
@@ -192,10 +199,12 @@ switch lower(Species)
 
         % load sitmuli
         fs_sig= 30e3;
-        [stim_wav, fs_stim_org]= audioread('.\files\wavfiles\DoDAMPatternsNEW_12k_mouse_MF2FF2inch.wav');
-        stim_wav= gen_resample(stim_wav, fs_stim_org, fs_sig);
+%         [stim_wav, fs_stim_org]= audioread('D:\Dropbox\Pitts_files\Aravind_ExpAM\wavfiles\DoDAMPatternsNEW_12k_mouse_MF2FF2inch.wav');
+        [stim_wav, fs_stim_org]= audioread('..\wavfiles\DoDAMPatternsNEW_12k_mouse_MF2FF2inch.wav');
+        stim_wav= helper.gen_resample(stim_wav, fs_stim_org, fs_sig);
 
-        Species_Dir= '.\files\Exports_Mice\50wk\12k\';
+%         Species_Dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\Exports_Mice\50wk\12k\';
+        Species_Dir= '..\Exports_Mice\50wk\12k\';
         all_files= dir([Species_Dir 'M*']);
         fs_ffr= 1/(40.96e-6);
         FFR_gain= .5;
@@ -205,13 +214,13 @@ switch lower(Species)
         tMin_s= 0;
         tMax_s= 1;
 
-        col_deep= get_color('g');
-        col_light= get_color('lg');
+        col_deep= helper.get_color('g');
+        col_light= helper.get_color('lg');
 end
 
 stim_wav= stim_wav/max(abs(stim_wav));
 
-% hp_env_filter= get_filter_designfilt('hp', 50, fs_env);
+% hp_env_filter= helper.get_filter_designfilt('hp', 50, fs_env);
 
 % Loop through all files to load all FFR data
 all_data= cell(1,length(all_files));
@@ -235,7 +244,7 @@ dam_traj_Hz(end)= nan;
 dam_traj_Hz_NFupper= dam_traj_Hz + 3*Filter_HalfWindow_Hz;
 
 
-bp_filter_ffr= get_filter_designfilt('bp', bp_window_Hz, fs_ffr);
+bp_filter_ffr= helper.get_filter_designfilt('bp', bp_window_Hz, fs_ffr);
 
 for fileVar=1:length(all_files)
     fStruct= all_files(fileVar);
@@ -268,17 +277,11 @@ for fileVar=1:length(all_files)
     [all_data_frac_tracked{fileVar}, all_data_abs_tracked{fileVar}]= get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz, Filter_HalfWindow_Hz);
     [all_data_frac_tracked_NF{fileVar}, all_data_abs_tracked_NF{fileVar}]= get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz_NFupper, Filter_HalfWindow_Hz);
 
-    %     [frac_NF_lower, abs_NF_lower]= get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz/dAM_NF_traj_factor, Filter_HalfWindow_Hz/dAM_NF_traj_factor);
-    %     [frac_NF_upper, abs_NF_upper]= get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz*dAM_NF_traj_factor, Filter_HalfWindow_Hz*dAM_NF_traj_factor);
-    %     all_data_frac_tracked_NF{fileVar}= (frac_NF_lower+frac_NF_upper)/(dAM_NF_traj_factor+1/dAM_NF_traj_factor);
-    %     all_data_abs_tracked_NF{fileVar}= (abs_NF_lower+abs_NF_upper)/(dAM_NF_traj_factor+1/dAM_NF_traj_factor);
 end
 mean_data= nanmean(cell2mat(all_data), 2);
 mean_data= filtfilt(bp_filter_ffr, mean_data);
-mean_env= detrend(gen_resample(mean_data, fs_ffr, fs_env));
-% mean_gerbil_env_hp= filtfilt(hp_env_filter, mean_gerbil_env);
+mean_env= detrend(helper.gen_resample(mean_data, fs_ffr, fs_env));
 mean_env_hp= mean_env;
-% mean_gerbil_data= mean_gerbil_data(1:end-2); % last two indices are nan
 mean_env= detrend(mean_env);
 mean_env= .98*mean_env/max(abs(mean_env));
 t_ffr_env= (1:length(mean_env))/fs_env;
@@ -290,7 +293,6 @@ if doSaveGrandAvg
     save(out_fName, 'mean_env_hp', 'fs_env', 'mean_data', 'dam_traj_Hz', 'fs_ffr', 'text_note');
 end
 
-% max_AM_tMin= dam_traj_Hz_human*(dAM_NF_traj_factor+1/dAM_NF_traj_factor)/2- dam_traj_Hz_human;
 min_AM_Hz= 15;
 max_AM_Hz= 1202;
 tMin_AM_ind= dsearchn(dam_traj_Hz(:), min_AM_Hz)-1;
@@ -312,9 +314,6 @@ if ismember(Species, {'rat', 'rat_vert', 'rat_horz'})
 
 end
 
-% all_pow_am= cell2mat(all_data_frac_tracked);
-% all_pow_am_NF= cell2mat(all_data_frac_tracked_NF);
-
 all_pow_am= cell2mat(all_data_abs_tracked);
 all_pow_am_NF= cell2mat(all_data_abs_tracked_NF);
 
@@ -323,7 +322,6 @@ mu_pow_am= nanmean(all_pow_am, 2);
 
 all_pow_am_NF= db(all_pow_am_NF(valid_NF_inds, :));
 mu_pow_am_NF= nanmean(all_pow_am_NF, 2);
-
 
 %%
 SG_range_dB= 40;
@@ -337,7 +335,7 @@ freq_tick_Hz_lab= {'16', '64', '256', '1.2k'};
 
 if doPlot
     axes(sp_ax(1));
-    plot_spectrogram(stim_wav, fs_sig);
+    helper.plot_spectrogram(stim_wav, fs_sig);
     title(sent_case(Species), 'Color', col_deep, 'Interpreter','none')
     xlabel('');
     if verboseAxis
@@ -361,7 +359,7 @@ if doPlot
 
     axes(sp_ax(3));
     hold on;
-    plot_spectrogram(mean_env_hp, fs_env);
+    helper.plot_spectrogram(mean_env_hp, fs_env);
     if range(get(colorbar, 'limit'))>SG_range_dB
         caxis([-SG_range_dB 0]+max(get(colorbar, 'limit')))
     end
@@ -382,14 +380,14 @@ if doPlot
     hold on;
     if ismember(Species, {'human', 'gerbil', 'mice'})
         plot(dam_traj_Hz_NFvalid, all_pow_am, 'Color', col_light, 'LineWidth', lw0)
-        % plot(dam_traj_Hz_gerbil_NFvalid, all_pow_am_gerbil_NF, 'Color', get_color('lr'), 'LineWidth', lw0)
+        % plot(dam_traj_Hz_gerbil_NFvalid, all_pow_am_gerbil_NF, 'Color', helper.get_color('lr'), 'LineWidth', lw0)
         lHan(1)= plot(dam_traj_Hz_NFvalid, mu_pow_am, 'Color', col_deep, 'linew', lw1);
-        lHan(2)= plot(dam_traj_Hz_NFvalid, mu_pow_am_NF, 'Color', get_color('lgray'), 'linew', lw1);
+        lHan(2)= plot(dam_traj_Hz_NFvalid, mu_pow_am_NF, 'Color', helper.get_color('lgray'), 'linew', lw1);
     elseif ismember(Species, {'rat', 'rat_vert', 'rat_horz'})
         plot(dam_traj_Hz_NFvalid(valid_rat_inds), all_pow_am(valid_rat_inds, :), 'Color', col_light, 'LineWidth', lw0)
-        % plot(dam_traj_Hz_gerbil_NFvalid, all_pow_am_gerbil_NF, 'Color', get_color('lr'), 'LineWidth', lw0)
+        % plot(dam_traj_Hz_gerbil_NFvalid, all_pow_am_gerbil_NF, 'Color', helper.get_color('lr'), 'LineWidth', lw0)
         lHan(1)= plot(dam_traj_Hz_NFvalid(valid_rat_inds), mu_pow_am(valid_rat_inds), 'Color', col_deep, 'linew', lw1);
-        lHan(2)= plot(dam_traj_Hz_NFvalid(valid_rat_inds), mu_pow_am_NF(valid_rat_inds), 'Color', get_color('lgray'), 'linew', lw1);
+        lHan(2)= plot(dam_traj_Hz_NFvalid(valid_rat_inds), mu_pow_am_NF(valid_rat_inds), 'Color', helper.get_color('lgray'), 'linew', lw1);
 
     end
     set(gca, 'XScale', 'log', 'XTick', freq_tick_Hz_val, 'XTickLabel', '')
@@ -406,11 +404,11 @@ if doPlot
     tri_filt_dur= 25e-3;
     tri_filt_width= round(fs_env*tri_filt_dur);
     if ismember(Species, {'human', 'gerbil', 'mice'})
-        plot(dam_traj_Hz_NFvalid, trifilt(mu_pow_am-mu_pow_am_NF, tri_filt_width), 'Color', col_deep, 'LineWidth', lw1)
-        plot(dam_traj_Hz_NFvalid, 0*mu_pow_am_NF, 'Color', get_color('lgray'), 'linew', lw1, 'LineStyle', '--');
+        plot(dam_traj_Hz_NFvalid, helper.trifilt(mu_pow_am-mu_pow_am_NF, tri_filt_width), 'Color', col_deep, 'LineWidth', lw1)
+        plot(dam_traj_Hz_NFvalid, 0*mu_pow_am_NF, 'Color', helper.get_color('lgray'), 'linew', lw1, 'LineStyle', '--');
     elseif ismember(Species, {'rat', 'rat_vert', 'rat_horz'})
-        plot(dam_traj_Hz_NFvalid(valid_rat_inds), trifilt(mu_pow_am(valid_rat_inds)-mu_pow_am_NF(valid_rat_inds), tri_filt_width), 'Color', col_deep, 'linew', lw1);
-        plot(dam_traj_Hz_NFvalid(valid_rat_inds), 0*mu_pow_am_NF(valid_rat_inds), 'Color', get_color('lgray'), 'linew', lw1, 'LineStyle', '--');
+        plot(dam_traj_Hz_NFvalid(valid_rat_inds), helper.trifilt(mu_pow_am(valid_rat_inds)-mu_pow_am_NF(valid_rat_inds), tri_filt_width), 'Color', col_deep, 'linew', lw1);
+        plot(dam_traj_Hz_NFvalid(valid_rat_inds), 0*mu_pow_am_NF(valid_rat_inds), 'Color', helper.get_color('lgray'), 'linew', lw1, 'LineStyle', '--');
 
     end
     

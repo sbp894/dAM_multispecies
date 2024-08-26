@@ -69,25 +69,25 @@ xlim(t_zoom_edge_ms)
 xlabel('Time (ms)');
 
 sp_ax(5)= subplot(nSProws, nSPcols, 5);
-plot_dAM_spectrogram(sam_stim, fs);
+helper.plot_dAM_spectrogram(sam_stim, fs);
 set(gca, 'YTick', carrier_freq_ticks_kHz, 'XTickLabel', '')
 xlabel('');
 panel_han(2)= text(-0.24, 1.1, 'B', 'Units', 'normalized', 'HorizontalAlignment', 'left', 'FontWeight', 'bold');
 
 sp_ax(6)= subplot(nSProws, nSPcols, 6);
 hold on
-[dft_sam_dB, Freq_sam_Hz]= plot_dft(sam_stim, fs, 'plot', false);
+[dft_sam_dB, Freq_sam_Hz]= helper.plot_dft(sam_stim, fs, 'plot', false);
 plot(dft_sam_dB, Freq_sam_Hz/1e3);
 xlim([-50 5]+max(dft_sam_dB));
 set(gca, 'YTick', carrier_freq_ticks_kHz, 'XTickLabel', '')
 
 sp_ax(9)= subplot(nSProws, nSPcols, 9);
-plot_dAM_spectrogram(sam_stim_env, fs);
+helper.plot_dAM_spectrogram(sam_stim_env, fs);
 set(gca, 'YTick', mod_freq_tick_kHz)
 panel_han(3)= text(-0.24, 1.1, 'C', 'Units', 'normalized', 'HorizontalAlignment', 'left', 'FontWeight', 'bold');
 
 sp_ax(10)= subplot(nSProws, nSPcols, 10);
-[dft_sam_env_dB, Freq_sam_env_Hz]= plot_dft(sam_stim_env, fs, 'plot', false);
+[dft_sam_env_dB, Freq_sam_env_Hz]= helper.plot_dft(sam_stim_env, fs, 'plot', false);
 plot(dft_sam_env_dB, Freq_sam_env_Hz/1e3);
 xlim([-50 5]+max(dft_sam_env_dB));
 set(gca, 'YTick', mod_freq_tick_kHz)
@@ -111,25 +111,25 @@ xlim(t_zoom_edge_ms)
 xlabel('Time (ms)');
 
 sp_ax(7)= subplot(nSProws, nSPcols, 7);
-plot_dAM_spectrogram(dam_stim, fs);
+helper.plot_dAM_spectrogram(dam_stim, fs);
 set(gca, 'YTick', carrier_freq_ticks_kHz, 'XTickLabel', '')
 xlabel('');
 panel_han(5)= text(-0.24, 1.1, 'E', 'Units', 'normalized', 'HorizontalAlignment', 'left', 'FontWeight', 'bold');
 
 sp_ax(8)= subplot(nSProws, nSPcols, 8);
 hold on
-[dft_dam_dB, Freq_dam_Hz]= plot_dft(dam_stim, fs, 'plot', false);
+[dft_dam_dB, Freq_dam_Hz]= helper.plot_dft(dam_stim, fs, 'plot', false);
 plot(dft_dam_dB, Freq_dam_Hz/1e3);
 xlim([-50 5]+max(dft_dam_dB));
 set(gca, 'YTick', carrier_freq_ticks_kHz, 'XTickLabel', '')
 
 sp_ax(11)= subplot(nSProws, nSPcols, 11);
-plot_dAM_spectrogram(dam_stim_env, fs);
+helper.plot_dAM_spectrogram(dam_stim_env, fs);
 set(gca, 'YTick', mod_freq_tick_kHz)
 panel_han(6)= text(-0.24, 1.1, 'F', 'Units', 'normalized', 'HorizontalAlignment', 'left', 'FontWeight', 'bold');
 
 sp_ax(12)= subplot(nSProws, nSPcols, 12);
-[dft_dam_env_dB, Freq_dam_env_Hz]= plot_dft(dam_stim_env, fs, 'plot', false);
+[dft_dam_env_dB, Freq_dam_env_Hz]= helper.plot_dft(dam_stim_env, fs, 'plot', false);
 plot(dft_dam_env_dB, Freq_dam_env_Hz/1e3);
 xlim([-50 5]+max(dft_dam_env_dB));
 set(gca, 'YTick', mod_freq_tick_kHz)
@@ -184,7 +184,9 @@ set(sp_ax(4), 'Units', 'normalized', 'Position', [xc2+xw+xs, yc+2*yw2+ys2+ys1, x
 %% 
 if strcmp(getenv('COMPUTERNAME'), 'NB-VATS-LAB1')
     fig_dir= 'C:\Users\sap245\Google Drive\PostDoc\dAM_MultiSpecies\Figures\';
-else
+elseif strcmp(getenv('COMPUTERNAME'), 'DESKTOP-SR5PJKK')
+    fig_dir= 'D:\Dropbox\Pitts_files\Aravind_ExpAM\___manuscript\saved_figures\'
+else 
     fig_dir= 'G:\My Drive\PostDoc\dAM_MultiSpecies\Figures\';
 end
 

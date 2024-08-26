@@ -69,13 +69,13 @@ for win_var=1:length(all_time_windows_ms)
         do_plot_boxes= 0;
     end
 
-    [total_ST_resolution(win_var), total_power_captured(win_var), txt_han(win_var)]= get_STresolution(stim_env, fs, dam_traj_Hz, tWindow_ms/1e3, do_plot_boxes);
+    [total_ST_resolution(win_var), total_power_captured(win_var), txt_han(win_var)]= helper.get_STresolution(stim_env, fs, dam_traj_Hz, tWindow_ms/1e3, do_plot_boxes);
 
 end
 
 axes(sp_ax(3))
 mrk_alpha= .75;
-scatter(all_time_windows_ms, total_ST_resolution, 'filled', 'MarkerFaceAlpha', mrk_alpha, 'MarkerEdgeAlpha', mrk_alpha, 'MarkerFaceColor', get_color('gray'), 'MarkerEdgeColor', get_color('gray'));
+scatter(all_time_windows_ms, total_ST_resolution, 'filled', 'MarkerFaceAlpha', mrk_alpha, 'MarkerEdgeAlpha', mrk_alpha, 'MarkerFaceColor', helper.get_color('gray'), 'MarkerEdgeColor', helper.get_color('gray'));
 xlim([.9*min(all_time_windows_ms) 1.1*max(all_time_windows_ms)]);
 set(gca, 'XScale', 'log', 'YScale', 'log', 'XTick', window_dur_tick, 'YTick', STres_tick);
 ylim([1.5 1.2*max(total_ST_resolution)]);
@@ -104,28 +104,28 @@ axes(sp_ax(4));
 hold on
 helper.plot_spectrogram(stim_env, fs, 40e-3, .95)
 xlim([-50 max(tStim)*1e3+50]);
-line(tStim*1e3, dam_traj_Hz/1e3, 'color', get_color('r'), 'linew', 1.5, 'linestyle', '--')
+line(tStim*1e3, dam_traj_Hz/1e3, 'color', helper.get_color('r'), 'linew', 1.5, 'linestyle', '--')
 colorbar off;
 ylim([0 dam_f_end*1.2]/1e3);
 
 axes(sp_ax(5));
 hold on;
-plot((Freq_xx-fs/4), Pxx_dB, 'Color', get_color('b'), 'LineWidth', 1.5);
-plot(optimal_ST_res*[-0.5 0.5], max(Pxx_dB)+[2 2], 'Color', get_color('r'), 'LineWidth', 1.5)
+plot((Freq_xx-fs/4), Pxx_dB, 'Color', helper.get_color('b'), 'LineWidth', 1.5);
+plot(optimal_ST_res*[-0.5 0.5], max(Pxx_dB)+[2 2], 'Color', helper.get_color('r'), 'LineWidth', 1.5)
 xlim([-20 20])
 ylim([-50 +5]+max(Pxx_dB));
 xlabel('Frequency (Hz)');
 ylabel('DFT amp (dB)');
 
 axes(sp_ax(6));
-plot(2*all_filt_halfBW, all_power_powFun_prct, 'x', 'Color', get_color('r'), 'LineWidth', 1.5);
+plot(2*all_filt_halfBW, all_power_powFun_prct, 'x', 'Color', helper.get_color('r'), 'LineWidth', 1.5);
 ylim([0 105]);
 xlabel('LP filter bandwidth (Hz)');
 ylabel('% power')
 
 axes(sp_ax(3));
 hold on
-plot([min(all_time_windows_ms), max(all_time_windows_ms)], optimal_ST_res*ones(1,2), 'LineStyle', '-', 'Color', get_color('r'), 'LineWidth', 2)
+plot([min(all_time_windows_ms), max(all_time_windows_ms)], optimal_ST_res*ones(1,2), 'LineStyle', '-', 'Color', helper.get_color('r'), 'LineWidth', 2)
 
 fprintf('Traditional best = %.1f (for %.0f ms) | Spectrally specific = %.1f \n', best_st_res, best_st_window, optimal_ST_res)
 
@@ -134,7 +134,7 @@ set(txt_han(~isnan(txt_han)),'FontSize', 11);
 set(findall(gcf,'-property','box'),'box', 'off');
 set(findall(gcf,'-property','TickDir'),'TickDir', 'both');
 
-txtHan= add_subplot_letter(2, 3, 11, -.17, 1.12);
+txtHan= helper.add_subplot_letter(2, 3, 11, -.17, 1.12);
 
 %%
 xc= .055;

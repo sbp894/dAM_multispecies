@@ -1,4 +1,4 @@
-function [timePlot, freqPlot, dB_powPlot]= plot_spectrogram(sig, fs, tWindow, fracOVlap, nfft, cbar_range, useDefaultPlot, tStart)
+function [timePlot, freqPlot, dB_powPlot]= plot_dAM_spectrogram(sig, fs, tWindow, fracOVlap, nfft, cbar_range, useDefaultPlot, tStart)
 if ~exist('tStart', 'var')
     tStart= 0;
 end
@@ -8,7 +8,7 @@ if ~exist('useDefaultPlot', 'var')
 end
 
 if ~exist('cbar_range', 'var')
-    cbar_range= 60;
+    cbar_range= 40;
 end
 
 if ~exist('tWindow', 'var')
@@ -30,13 +30,14 @@ end
 
 nWindow= round(tWindow*fs);
 if useDefaultPlot
-    spectrogram(sig, blackman(nWindow), round(nWindow*fracOVlap), nfft, 'yaxis', fs);
+    spectrogram(sig, hamming(nWindow), round(nWindow*fracOVlap), nfft, 'yaxis', fs);
+%     spectrogram(sig, blackman(nWindow), round(nWindow*fracOVlap), nfft, 'yaxis', fs);
     timePlot= nan;
     freqPlot= nan;
     dB_powPlot= nan;
 
 else
-    [S, F, T]= spectrogram(sig, blackman(nWindow), round(nWindow*fracOVlap), nfft, 'yaxis', fs);
+    [S, F, T]= spectrogram(sig, hamming(nWindow), round(nWindow*fracOVlap), nfft, 'yaxis', fs);
     timePlot= (tStart+T);
     freqPlot= F/1e3;
 
