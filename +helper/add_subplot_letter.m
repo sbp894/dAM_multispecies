@@ -1,4 +1,4 @@
-function txtHan= add_subplot_letter(nSProws, nSPcols, fSize, xShift, yShift)
+function txtHan= add_subplot_letter(nSProws, nSPcols, fSize, xShift, yShift, SP_letters)
 
 if ~exist('xShift', 'var')
     xShift= 0.01;
@@ -7,7 +7,10 @@ if ~exist('yShift', 'var')
     yShift= 1.05;
 end
 
-SP_letters= 'ABCDEFGHI';
+if ~exist('SP_letters', 'var')
+    SP_letters= 'ABCDEFGHI';
+end
+
 count= 0;
 txtHan= nan(nSProws*nSPcols,1);
 for rowVar=1:nSProws
