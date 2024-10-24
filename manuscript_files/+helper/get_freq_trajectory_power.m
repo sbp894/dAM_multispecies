@@ -2,6 +2,8 @@
 % Compute power in a signal along a frequency trajectory. numel(inSig) has
 % to be equal to numel(freqTrajectory). Options to use both multitaper PSD
 % (pmtm) or DFT.
+% If stim_freq_shift is undefined, then stim_freq_shift is set to the
+% geometric mean of the desired freauency trajectory. 
 function [outPower, totPower, Pxx_dB, Freq_xx]= get_freq_trajectory_power(inSig, fs, freqTrajectory, plotPSD, freq_half_window_co_Hz, stim_freq_shift, nw, use_DFT0_DPSS1, freqMin)
 
 if ~exist('freqMin', 'var')
@@ -68,7 +70,7 @@ else
     elseif isempty(nw)
         nw= 1.5;
     end
-    [Pxx_dB, Freq_xx]= helper.plot_dpss_psd(sqrt(2)*real(sig_Plot), fs, 'nw', nw, 'title', '', 'norm', true, 'plot', plotPSD==1, 'yrange', 60);
+    [Pxx_dB, Freq_xx]= plot_dpss_psd(sqrt(2)*real(sig_Plot), fs, 'nw', nw, 'title', '', 'norm', true, 'plot', plotPSD==1, 'yrange', 60);
     % See Table 8.1 Oppenheim and Schafer. DFT(Real(X)) = 0.5 (DFT(X) +
     % DFT(X*)). So to conserve power (after getting rid of negative
     % frequencies using Hilbert), multiply by sqrt(2).

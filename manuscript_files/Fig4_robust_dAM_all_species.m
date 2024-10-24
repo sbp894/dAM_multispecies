@@ -82,7 +82,7 @@ switch lower(Species)
     case 'human'
 
         % load dAM trajectory
-        dam_traj_Hz_struct= load('AMfreqvec_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
+        dam_traj_Hz_struct= load('+helper\AMfreqvec_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
         Xorg= (1:length(dam_traj_Hz_struct.AMfreqvec_est))'/dam_traj_Hz_struct.fs;
         Yorg= dam_traj_Hz_struct.AMfreqvec_est(:);
 
@@ -107,7 +107,7 @@ switch lower(Species)
 
     case 'gerbil'
         % load dAM trajectory
-        dam_traj_Hz_struct= load('AMfreqvec_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
+        dam_traj_Hz_struct= load('+helper\AMfreqvec_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
         Xorg= (1:length(dam_traj_Hz_struct.AMfreqvec_est))'/dam_traj_Hz_struct.fs;
         Yorg= dam_traj_Hz_struct.AMfreqvec_est(:);
 
@@ -182,7 +182,7 @@ switch lower(Species)
 
     case 'mice'
         % load dAM trajectory
-        dam_traj_Hz_struct= load('AMfreqvec_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
+        dam_traj_Hz_struct= load('+helper\AMfreqvec_est.mat'); % estimated using AMFMforDODpiecewise_APeditAug21
         Xorg= (1:length(dam_traj_Hz_struct.AMfreqvec_est))'/dam_traj_Hz_struct.fs;
         Yorg= dam_traj_Hz_struct.AMfreqvec_est(:);
 
@@ -241,7 +241,7 @@ for fileVar=1:length(all_files)
 
     switch Species
         case {'human', 'gerbil', 'mice'}
-            temp_data= read_txt_data(fName);
+            temp_data= helper.read_txt_data(fName);
             temp_data= temp_data(1:nMax_ind_ffr);
 
         case {'rat', 'rat_vert', 'rat_horz'}
@@ -264,8 +264,10 @@ for fileVar=1:length(all_files)
 %     temp_data=  detrend(temp_data(:)); % should be column vector
     all_data{fileVar}= temp_data;
 
-    [all_data_frac_tracked{fileVar}, all_data_abs_tracked{fileVar}]= get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz, Filter_HalfWindow_Hz);
-    [all_data_frac_tracked_NF{fileVar}, all_data_abs_tracked_NF{fileVar}]= get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz_NFupper, Filter_HalfWindow_Hz);
+    [all_data_frac_tracked{fileVar}, all_data_abs_tracked{fileVar}]= ...
+        helper.get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz, Filter_HalfWindow_Hz);
+    [all_data_frac_tracked_NF{fileVar}, all_data_abs_tracked_NF{fileVar}]= ...
+        helper.get_trajectory_hilbert_signal(temp_data, fs_ffr, dam_traj_Hz_NFupper, Filter_HalfWindow_Hz);
 
 end
 mean_data= nanmean(cell2mat(all_data), 2);
